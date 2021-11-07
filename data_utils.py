@@ -50,3 +50,10 @@ def get_rel_countries(mode):
     return countries
     
 
+geo_map_json = './data/geojson.json'
+
+import json
+def load_json(json_file):
+    obj = json.load(json_file)
+    return obj
+
