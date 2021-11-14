@@ -15,48 +15,74 @@ export_countries = get_rel_countries(mode='export')
 trade_year_range = range(2000, 2021)
 
 app.layout = html.Div([
-    html.P("Export Target"),
-    dcc.Dropdown(
-        id="export-dropdown",
-        options=[
-            {'label': x, 'value': x} for x in export_countries
-        ], 
-        value='',
-        clearable=False,
-    ),
-    dcc.Graph(id='export-fig'),
-    html.P("Import Target"),
-    dcc.Dropdown(
-        id="import-dropdown",
-        options=[
-            {'label': x, 'value': x} for x in import_countries
-        ], 
-        value='',
-        clearable=False,
-    ),
-    dcc.Graph(id='import-fig'),
-    html.P("Trade"),
-    dcc.Dropdown(
-        id='trade_mode',
-        options=[
-            {'label': x, 'value': x.lower()} for x in ['Export', 'Import']
-        ]
-    ),
-    html.P("Commodity"),
-    dcc.Dropdown(
-        id='commodity',
-        options=[
-            {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
-        ]
-    ),
-    html.P("Trade Year"),
-    dcc.Dropdown(
-        id='trade_year',
-        options=[
-            {'label': str(x), 'value': str(x)} for x in trade_year_range
-        ]
-    ),
-    dcc.Graph(id='map'),
+    html.Div([
+        html.Div([
+            html.P("Export Target"),
+            dcc.Dropdown(
+                id="export-dropdown",
+                options=[
+                    {'label': x, 'value': x} for x in export_countries
+                ], 
+                value='',
+                clearable=False,
+            ),
+            dcc.Graph(id='export-fig'),
+        ]),
+        html.Div([
+            html.P("Import Target"),
+            dcc.Dropdown(
+                id="import-dropdown",
+                options=[
+                    {'label': x, 'value': x} for x in import_countries
+                ], 
+                value='',
+                clearable=False,
+            ),
+            dcc.Graph(id='import-fig'),
+        ]),
+    ]),
+    html.Div([
+        html.Div([
+            html.Div([
+                html.P("Trade"),
+                dcc.Dropdown(
+                    id='trade_mode',
+                    options=[
+                        {'label': x, 'value': x.lower()} for x in ['Export', 'Import']
+                    ]
+                ),
+            ]),
+            html.Div([
+                html.P("Commodity"),
+                dcc.Dropdown(
+                    id='commodity',
+                    options=[
+                        {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
+                    ]
+                ),
+            ]),
+            html.Div([
+                html.P("Trade Year"),
+                dcc.Dropdown(
+                    id='trade_year',
+                    options=[
+                        {'label': str(x), 'value': str(x)} for x in trade_year_range
+                    ]
+                ),
+                dcc.Graph(id='map'),        
+            ]),    
+        ]),
+    ]),
+    html.Div([
+        html.P("Energy Theme"),
+        dcc.Dropdown(
+            id='energy_map_menu',
+            options=[
+                {'label': str(x[0]), 'value': str(x[1])} for x in [('Energy Demand Trend', 'energy-demand-trend') ,('Renewable Energy Trend', 'renewable-trend')]
+            ]
+        ),
+        dcc.Graph(id='energy_map'),
+    ], className="row"),
 ])
 
 @app.callback(Output("export-fig", "figure"), [Input("export-dropdown", "value")])
@@ -119,6 +145,36 @@ def display_map(trade, commodity, trade_year):
     )
     fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
     #fig.show()
+    return fig
+
+@app.callback(Output('energy_map', 'figure'), [Input('energy_map_menu', 'value')])
+def display_energy_map(info_type):
+    datapath = './data/energy_demand.csv'
+    col = 'Trend'
+    title = 'Energy Demand Map'
+    label = 'Energy Demand Trend'
+    if (info_type == 'energy-demand-trend'):
+        datapath = './data/energy_demand.csv'
+        col = 'Trend'
+        label = 'Energy Demand Trend'
+    elif (info_type == 'renewable-demand-trend'):
+        datapath = './data/renewable_demand.csv'
+        col = 'Trend'
+        label = 'Renewable Energy Demand Trend'
+    
+    countries_json = json.load(open('./data/countries.geo.json'))
+    df = pd.read_csv(datapath)
+    trend = list(df.loc[:, col])
+    min_trend = min(trend)
+    max_trend = max(trend)
+
+    fig = px.choropleth_mapbox(df, geojson=countries_json, locations="Code", color=col, 
+            color_continuous_scale='viridis', 
+            range_color=(0, max_trend), 
+            mapbox_style="carto-positron",
+            labels={'Trend': label},
+            zoom=1,
+            title=title)
     return fig
         
 app.run_server(debug=True)
