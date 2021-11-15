@@ -3,12 +3,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
-
+import dash_bootstrap_components as dbc
 from data_utils import get_rel_countries
 from data_utils import get_data
 from data_utils import get_data_on_demand
 
 app = dash.Dash(__name__)
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 import_countries = get_rel_countries(mode='import')
 export_countries = get_rel_countries(mode='export')
@@ -17,143 +18,113 @@ export_countries_on_demand = get_rel_countries(mode='on-demand')
 trade_year_range = range(2000, 2021)
 
 app.layout = html.Div([
-    html.Div([
-        html.Div([
-            html.P("Export on Demand"),
-            dcc.Dropdown(
-                id="country-on-demand",
-                options=[
-                    {'label': x, 'value': x} for x in export_countries_on_demand
-                ],
-                value='',
-                clearable=False,
-            ),
-            dcc.Graph(id='export-on-demand'),
-        ])
-    ]),
-    html.Div([
-        html.Div([
-            html.P("Export Target"),
-            dcc.Dropdown(
-                id="export-dropdown",
-                options=[
-                    {'label': x, 'value': x} for x in export_countries
-                ],
-                value='',
-                clearable=False,
-            ),
-            dcc.Graph(id='export-fig'),
-        ]),
-        html.Div([
-            html.P("Import Target"),
-            dcc.Dropdown(
-                id="import-dropdown",
-                options=[
-                    {'label': x, 'value': x} for x in import_countries
-                ],
-                value='',
-                clearable=False,
-            ),
-            dcc.Graph(id='import-fig'),
-        ]),
-    ]),
-    html.Div([
-        html.Div([
+    dbc.Row([
+        dbc.Col(
             html.Div([
-                html.P("Trade"),
+                html.P("Export on Demand"),
                 dcc.Dropdown(
-                    id='trade_mode',
+                    id="country-on-demand",
                     options=[
-                        {'label': x, 'value': x.lower()} for x in ['Export', 'Import']
-                    ]
+                        {'label': x, 'value': x} for x in export_countries_on_demand
+                    ],
+                    value='',
+                    clearable=False,
                 ),
-            ]),
-            html.Div([
-                html.P("Commodity"),
-                dcc.Dropdown(
-                    id='commodity',
-                    options=[
-                        {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
-                    ]
-                ),
-            ]),
-            html.Div([
-                html.P("Trade Year"),
-                dcc.Dropdown(
-                    id='trade_year',
-                    options=[
-                        {'label': str(x), 'value': str(x)} for x in trade_year_range
-                    ]
-                ),
-                dcc.Graph(id='map'),
-            ]),
-        ]),
-    ]),
-    html.Div([
-        html.P("Energy Theme"),
-        dcc.Dropdown(
-            id='energy_map_menu',
-            options=[
-                {'label': str(x[0]), 'value': str(x[1])} for x in
-                [('Energy Demand Trend', 'energy-demand-trend'), ('Renewable Energy Trend', 'renewable-trend')]
-            ]
+                dcc.Graph(id='export-on-demand'),
+            ])
         ),
-        dcc.Graph(id='energy_map'),
-    ], className="row"),
-    html.P("Export on Demand"),
-    dcc.Dropdown(
-        id="country-on-demand",
-        options=[
-            {'label': x, 'value': x} for x in export_countries_on_demand
-        ],
-        value='',
-        clearable=False,
-    ),
-    dcc.Graph(id='export-on-demand'),
-    html.P("Export Target"),
-    dcc.Dropdown(
-        id="export-dropdown",
-        options=[
-            {'label': x, 'value': x} for x in export_countries
-        ],
-        value='',
-        clearable=False,
-    ),
-    dcc.Graph(id='export-fig'),
-    html.P("Import Target"),
-    dcc.Dropdown(
-        id="import-dropdown",
-        options=[
-            {'label': x, 'value': x} for x in import_countries
-        ],
-        value='',
-        clearable=False,
-    ),
-    dcc.Graph(id='import-fig'),
-    html.P("Trade"),
-    dcc.Dropdown(
-        id='trade_mode',
-        options=[
-            {'label': x, 'value': x.lower()} for x in ['Export', 'Import']
-        ]
-    ),
-    html.P("Commodity"),
-    dcc.Dropdown(
-        id='commodity',
-        options=[
-            {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
-        ]
-    ),
-    html.P("Trade Year"),
-    dcc.Dropdown(
-        id='trade_year',
-        options=[
-            {'label': str(x), 'value': str(x)} for x in trade_year_range
-        ]
-    ),
-    dcc.Graph(id='map'),
-
-])
+        
+    ]),
+    dbc.Row([
+        dbc.Col(
+            html.Div([
+                html.P("Export Target"),
+                dcc.Dropdown(
+                    id="export-dropdown",
+                    options=[
+                        {'label': x, 'value': x} for x in export_countries
+                    ],
+                    value='',
+                    clearable=False,
+                ),
+                dcc.Graph(id='export-fig'),
+            ])
+        ),
+        dbc.Col(
+            html.Div([
+                html.P("Import Target"),
+                dcc.Dropdown(
+                    id="import-dropdown",
+                    options=[
+                        {'label': x, 'value': x} for x in import_countries
+                    ],
+                    value='',
+                    clearable=False,
+                ),
+                dcc.Graph(id='import-fig'),
+            ])
+        ),
+    ]),
+    dbc.Row([
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    html.P("Trade"),
+                    dcc.Dropdown(
+                        id='trade_mode',
+                        options=[
+                            {'label': x, 'value': x.lower()} for x in ['Export', 'Import']
+                        ]
+                    ),
+                ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.P("Commodity"),
+                    dcc.Dropdown(
+                        id='commodity',
+                        options=[
+                            {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
+                        ]
+                    ),
+                ])
+            ),
+            dbc.Col(
+                html.Div([
+                    html.P("Trade Year"),
+                    dcc.Dropdown(
+                        id='trade_year',
+                        options=[
+                            {'label': str(x), 'value': str(x)} for x in trade_year_range
+                        ]
+                    ),
+                ])
+            ),
+        ]),
+        dbc.Row([
+            dbc.Col(
+                html.Div([
+                    dcc.Graph(id='map'),
+                ])
+            ),
+        ]),
+    ]),
+    dbc.Row([
+        dbc.Col(
+            html.Div([
+                html.P("Energy Theme"),
+                dcc.Dropdown(
+                    id='energy_map_menu',
+                    options=[
+                        {'label': str(x[0]), 'value': str(x[1])} for x in
+                        [('Energy Demand Trend', 'energy-demand-trend'), ('Renewable Energy Trend', 'renewable-demand-trend')]
+                    ]
+                ),
+                dcc.Graph(id='energy_map'),
+            ])
+        )
+    ]),
+], className="container")
 
 
 # grafik bar chart ekspor on demand
@@ -251,7 +222,7 @@ def display_energy_map(info_type):
         col = 'Trend'
         label = 'Energy Demand Trend'
     elif (info_type == 'renewable-demand-trend'):
-        datapath = './data/renewable_demand.csv'
+        datapath = './data/renewable_energy_demand.csv'
         col = 'Trend'
         label = 'Renewable Energy Demand Trend'
 
