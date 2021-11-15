@@ -7,8 +7,6 @@ relasi_impor_all = './data/relasi_impor_all.csv'
 
 import pandas as pd
 
-
-
 """
 Get data from csv based on mode.
 @param mode:    export -> export data
@@ -16,6 +14,8 @@ Get data from csv based on mode.
 @param country: Target country.
 @return: list of values.
 """
+
+
 def get_data(mode, country):
     df = {}
     if (mode == 'export'):
@@ -28,13 +28,31 @@ def get_data(mode, country):
         return list(df.loc[country])
     else:
         return []
-    
+
+
+def get_data_on_demand(country):
+    df_gas = pd.read_csv(relasi_ekspor_gas_by_value)
+    df_oil = pd.read_csv(relasi_ekspor_minyak_mentah_by_value)
+    df_stack = pd.concat([stacking_df(df_gas, "gas"), stacking_df(df_oil, "oil")])
+    return df_stack[df_stack['country'] == country]
+
+
+# function to transform data to stack format
+def stacking_df(df_input, commodity):
+    df_output = df_input.set_index(['country', 'id']).stack().reset_index() \
+        .rename(columns={"level_2": 'year', 0: 'value'})
+    df_output["commodity"] = str(commodity)
+    return df_output
+
+
 """
 Get relation countries.
 @param mode:    all -> all countries,  
                 export -> all export targets,
                 import -> all import targets.
 """
+
+
 def get_rel_countries(mode):
     countries = []
     if (mode == 'export'):
@@ -45,14 +63,21 @@ def get_rel_countries(mode):
         df = pd.read_csv(relasi_impor_all)
         df = df.set_index('country')
         countries = list(df.index)
+    elif (mode == 'on-demand'):
+        df_gas = pd.read_csv(relasi_ekspor_gas_by_value)
+        df_oil = pd.read_csv(relasi_ekspor_minyak_mentah_by_value)
+        df_stack = pd.concat([stacking_df(df_gas, "gas"), stacking_df(df_oil, "oil")])
+        countries = list(df_stack['country'].unique())
     else:
         countries = []
     return countries
-    
+
 
 geo_map_json = './data/geojson.json'
 
 import json
+
+
 def load_json(json_file):
     obj = json.load(json_file)
     return obj
