@@ -36,6 +36,24 @@ def get_data_on_demand(country):
     df_stack = pd.concat([stacking_df(df_gas, "gas"), stacking_df(df_oil, "oil")])
     return df_stack[df_stack['country'] == country]
 
+import plotly.graph_objects as go
+def get_fig_data_on_demand(country):
+    years = list(range(2000, 2020))
+    df_gas = pd.read_csv(relasi_ekspor_gas_by_value)
+    df_gas = df_gas.set_index('country')
+    gas_vals = list(df_gas.loc[country, :])[1:]
+    
+    df_oil = pd.read_csv(relasi_ekspor_minyak_mentah_by_value)
+    df_oil = df_oil.set_index('country')
+    oil_vals = list(df_oil.loc[country, :])[1:]
+
+    fig = go.Figure(data=[
+        go.Bar(name='gas', x=years, y=gas_vals, yaxis='y'),
+        go.Bar(name='oil', x=years, y=oil_vals, yaxis='y')
+    ])
+    fig.update_layout(barmode='stack')
+    return fig
+
 
 # function to transform data to stack format
 def stacking_df(df_input, commodity):

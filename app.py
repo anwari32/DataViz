@@ -38,29 +38,28 @@ app.layout = html.Div([
     dbc.Row([
         dbc.Col(
             html.Div([
-                html.P("Export Target"),
+                html.P("Country"),
+            ]), width="auto"
+        ),
+        dbc.Col(
+            html.Div([
                 dcc.Dropdown(
-                    id="export-dropdown",
+                    id='country-dropdown',
                     options=[
-                        {'label': x, 'value': x} for x in export_countries
-                    ],
-                    value='',
-                    clearable=False,
-                ),
+                        {'label': x, 'value': x} for x in set(export_countries + import_countries)
+                    ]
+                )
+            ]),
+        )
+    ]),
+    dbc.Row([
+        dbc.Col(
+            html.Div([
                 dcc.Graph(id='export-fig'),
             ])
         ),
         dbc.Col(
             html.Div([
-                html.P("Import Target"),
-                dcc.Dropdown(
-                    id="import-dropdown",
-                    options=[
-                        {'label': x, 'value': x} for x in import_countries
-                    ],
-                    value='',
-                    clearable=False,
-                ),
                 dcc.Graph(id='import-fig'),
             ])
         ),
@@ -128,6 +127,7 @@ app.layout = html.Div([
 
 
 # grafik bar chart ekspor on demand
+from data_utils import get_fig_data_on_demand
 @app.callback(Output('export-on-demand', 'figure'), [Input('country-on-demand', 'value')])
 def display_export_on_demand(country):
     fig = px.bar(get_data_on_demand(country),
@@ -135,28 +135,36 @@ def display_export_on_demand(country):
                  x="value",
                  color="commodity",
                  barmode="stack",
-                 orientation='h')
+                 orientation='h'
+                 )
+    # fig = get_fig_data_on_demand(country)
     return fig
 
 
 # grafik bar chart impor
 
 # grafik ekspor all
-@app.callback(Output("export-fig", "figure"), [Input("export-dropdown", "value")])
+@app.callback(Output("export-fig", "figure"), [Input("country-dropdown", "value")])
 def display_export(country):
+    title = ''
+    if (country):
+        title = 'Export Volume to ' + country
     fig = go.Figure(
         data=go.Bar(y=get_data('export', country), x=list(range(2010, 2021))),
-        layout={'title': country}
+        layout={'title': title}
     )
     return fig
 
 
 # grafik impor all
-@app.callback(Output("import-fig", "figure"), [Input('import-dropdown', 'value')])
+@app.callback(Output("import-fig", "figure"), [Input('country-dropdown', 'value')])
 def display_import(country):
+    title = ''
+    if (country):
+        title = 'Import Volume from ' + country
     fig = go.Figure(
         data=go.Bar(y=get_data('import', country), x=list(range(2010, 2021))),
-        layout={'title': country}
+        layout={'title': title}
     )
     return fig
 
