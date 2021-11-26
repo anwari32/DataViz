@@ -34,7 +34,6 @@ def get_normalized_import_data(filepath):
         return normalized_df
     return
 
-
 # Create map for normalized import map.
 def get_normalized_import_map(filepath, year):
     if (os.path.exists(filepath)):
