@@ -73,7 +73,8 @@ app.layout = html.Div([
                         id='trade_mode',
                         options=[
                             {'label': x, 'value': x.lower()} for x in ['Export', 'Import']
-                        ]
+                        ],
+                        value = 'export'
                     ),
                 ])
             ),
@@ -84,7 +85,8 @@ app.layout = html.Div([
                         id='commodity',
                         options=[
                             {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
-                        ]
+                        ],
+                        value = 'all'
                     ),
                 ])
             ),
@@ -95,7 +97,8 @@ app.layout = html.Div([
                         id='trade_year',
                         options=[
                             {'label': str(x), 'value': str(x)} for x in trade_year_range
-                        ]
+                        ],
+                        value = '2000'
                     ),
                 ])
             ),
@@ -117,7 +120,8 @@ app.layout = html.Div([
                     options=[
                         {'label': str(x[0]), 'value': str(x[1])} for x in
                         [('Energy Demand Trend', 'energy-demand-trend'), ('Renewable Energy Trend', 'renewable-demand-trend')]
-                    ]
+                    ],
+                    value = 'energy-demand-trend'
                 ),
                 dcc.Graph(id='energy_map'),
             ])
@@ -210,11 +214,12 @@ def display_map(trade, commodity, trade_year):
                                color_continuous_scale="Viridis",
                                range_color=(min_val, max_val),
                                mapbox_style="carto-positron",
-                               zoom=3, center={"lat": 37.0902, "lon": -95.7129},
+                               zoom=1,
+                               center={"lat": 30, "lon": 0},
                                opacity=0.5,
                                labels={'unemp': 'unemployment rate'}
                                )
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_layout(margin={"r": 0, "t": 10, "l": 20, "b": 0})
     # fig.show()
     return fig
 
@@ -247,6 +252,7 @@ def display_energy_map(info_type):
                                labels={'Trend': label},
                                zoom=1,
                                title=title)
+    fig.update_layout(margin={"r": 0, "t": 30, "l": 20, "b": 0})
     return fig
 
 
