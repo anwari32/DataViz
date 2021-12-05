@@ -220,6 +220,7 @@ def display_map(trade, commodity, trade_year):
                                labels={'unemp': 'unemployment rate'}
                                )
     fig.update_layout(margin={"r": 0, "t": 10, "l": 20, "b": 0})
+    fig.layout.coloraxis.colorbar.title = 'Volume<br>(ribu ton)'
     # fig.show()
     return fig
 
@@ -253,6 +254,8 @@ def display_energy_map(info_type):
                                zoom=1,
                                title=title)
     fig.update_layout(margin={"r": 0, "t": 30, "l": 20, "b": 0})
+    fig.layout.coloraxis.colorbar.title = 'Changes %'
+    fig.layout.coloraxis.colorbar.tickformat = '%0f'
     return fig
 
 
