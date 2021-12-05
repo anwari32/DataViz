@@ -1,4 +1,6 @@
 import dash
+import datetime as dt
+import pandas as pd
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -8,8 +10,29 @@ from data_utils import get_rel_countries
 from data_utils import get_data
 from data_utils import get_data_on_demand
 
+from dash.dependencies import Input, Output, State, ClientsideFunction
+
+
+
 app = dash.Dash(__name__)
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+layout = dict(
+    autosize=True,
+    automargin=True,
+    margin=dict(l=30, r=30, b=20, t=40),
+    hovermode="closest",
+    plot_bgcolor="#F9F9F9",
+    paper_bgcolor="#F9F9F9",
+    legend=dict(font=dict(size=10), orientation="h"),
+    title="Satellite Overview",
+    mapbox=dict(
+        style="light",
+        center=dict(lon=-78.05, lat=42.54),
+        zoom=7,
+    ),
+)
+
 
 import_countries = get_rel_countries(mode='import')
 export_countries = get_rel_countries(mode='export')
@@ -17,37 +40,90 @@ export_countries_on_demand = get_rel_countries(mode='on-demand')
 
 trade_year_range = range(2000, 2021)
 
-app.layout = html.Div([
+app.layout = html.Div([    
     dbc.Row([
         dbc.Col(
-            html.Div([
-                html.P("Export on Demand"),
-                dcc.Dropdown(
-                    id="country-on-demand",
-                    options=[
-                        {'label': x, 'value': x} for x in export_countries_on_demand
-                    ],
-                    value='',
-                    clearable=False,
-                ),
-                dcc.Graph(id='export-on-demand'),
-            ])
+            html.Div(
+                [
+                    html.Div(
+                        [
+                            html.Img(
+                                src=app.get_asset_url("dash-logo.png"),
+                                id="plotly-image",
+                                style={
+                                    "height": "60px",
+                                    "width": "auto",
+                                    "margin-bottom": "25px",
+                                },
+                            )
+                        ],
+                        className="one-third column",
+                    ),
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.H2(
+                                        "Export-Import Visualization",
+                                        style={"margin-bottom": "0px"},
+                                    ),
+                                    html.H5(
+                                        "IF5170 Data Visualization", style={"margin-top": "0px"}
+                                    ),
+                                ]
+                            )
+                        ],
+                        className="one-half column",
+                        id="title",
+                    ),
+                    html.Div([
+                            html.A(
+                                html.Button("Feedback", id="learn-more-button"),
+                                href="https://docs.google.com/forms/d/e/1FAIpQLSd92s8qqxJ9zgwEQjSF01FBbVF2yAJxIXIIM2THpFzCkwSlYw/viewform",
+                            )
+                        ]
+                    ),
+                    
+                ],
+                id="header",
+            ),
         ),
         
     ]),
-    dbc.Row([
-        dbc.Col(
-            html.Div([
-                html.P("Country"),
-            ]), width="auto"
+
+
+    html.Div([
+        html.Div(
+            [
+                html.Div(
+                    html.Div([
+                        dcc.Dropdown(
+                            id="country-on-demand",
+                            options=[
+                                {'label': x, 'value': x} for x in export_countries_on_demand
+                            ],
+                            value='Jepang',
+                            clearable=False,
+                        ),
+                        
+                        dcc.Graph(id='export-on-demand'),
+                        ])
+                        
+                    ),               
+            ],
         ),
+    ]),
+    
+    dbc.Row([
         dbc.Col(
             html.Div([
                 dcc.Dropdown(
                     id='country-dropdown',
                     options=[
                         {'label': x, 'value': x} for x in set(export_countries + import_countries)
-                    ]
+                    ],
+                    value='Tiongkok',
+                    clearable=False,
                 )
             ]),
         )
@@ -135,8 +211,18 @@ def display_export_on_demand(country):
                  x="value",
                  color="commodity",
                  barmode="stack",
-                 orientation='h'
+                 orientation='h',
+                 
+                 
                  )
+    fig.update_layout(
+    title={
+        'text': "Export on Demand",
+        'y':0.9,
+        'x':0.5,
+        'xanchor': 'center',
+        'yanchor': 'top'})
+
     # fig = get_fig_data_on_demand(country)
     return fig
 
@@ -248,6 +334,10 @@ def display_energy_map(info_type):
                                zoom=1,
                                title=title)
     return fig
+
+
+
+# new
 
 
 app.run_server(debug=True)
