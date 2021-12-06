@@ -206,17 +206,25 @@ def display_map(trade, commodity, trade_year):
     if (not trade_year):
         trade_year = '2000'
 
+    df_country = pd.read_csv('./data/energy_demand.csv')
+    df_country.drop(df_country.columns[2:], axis=1, inplace=True)
+    df_country.rename(columns={'Country': 'country', 'Code': 'id'}, inplace=True)
+    df = pd.concat([df, df_country], axis=0, ignore_index=True).\
+                               drop_duplicates(subset=['id']).fillna(0)
     tyr = list(df.loc[:, trade_year])
     min_val = min(tyr)
     max_val = max(tyr)
     # fig = px.choropleth_mapbox(df, geojson=countries_json, locations='fips', color='unemp',
-    fig = px.choropleth_mapbox(df, geojson=countries_json, locations='id', color=str(trade_year),
+    fig = px.choropleth_mapbox(df,
+                               geojson=countries_json,
+                               locations='id',
+                               color=str(trade_year),
                                color_continuous_scale="Viridis",
                                range_color=(min_val, max_val),
                                mapbox_style="carto-positron",
                                zoom=1,
                                center={"lat": 30, "lon": 0},
-                               opacity=0.5,
+                               # opacity=0,
                                labels={'unemp': 'unemployment rate'}
                                )
     fig.update_layout(margin={"r": 0, "t": 10, "l": 20, "b": 0})
@@ -252,6 +260,7 @@ def display_energy_map(info_type):
                                mapbox_style="carto-positron",
                                labels={'Trend': label},
                                zoom=1,
+                               center={"lat": 30, "lon": 0},
                                title=title)
     fig.update_layout(margin={"r": 0, "t": 30, "l": 20, "b": 0})
     fig.layout.coloraxis.colorbar.title = 'Changes %'
