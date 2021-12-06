@@ -53,17 +53,22 @@ app.layout = html.Div([
         )
     ]),
     dbc.Row([
-        dbc.Col(
-            html.Div([
-                dcc.Graph(id='export-fig'),
-            ])
-        ),
-        dbc.Col(
-            html.Div([
-                dcc.Graph(id='import-fig'),
-            ])
-        ),
+       html.Div([
+           dcc.Graph(id='export-import-fig'),
+       ])
     ]),
+    # dbc.Row([
+    #     dbc.Col(
+    #         html.Div([
+    #             dcc.Graph(id='export-fig'),
+    #         ])
+    #     ),
+    #     dbc.Col(
+    #         html.Div([
+    #             dcc.Graph(id='import-fig'),
+    #         ])
+    #     ),
+    # ]),
     dbc.Row([
         dbc.Row([
             dbc.Col(
@@ -147,30 +152,46 @@ def display_export_on_demand(country):
 
 # grafik bar chart impor
 
-# grafik ekspor all
-@app.callback(Output("export-fig", "figure"), [Input("country-dropdown", "value")])
-def display_export(country):
-    title = ''
+# grafik ekspor-impor
+@app.callback(Output("export-import-fig", "figure"), [Input("country-dropdown", "value")])
+def display_export_import(country):
     if (country):
-        title = 'Export Volume to ' + country
-    fig = go.Figure(
-        data=go.Bar(y=get_data('export', country), x=list(range(2010, 2021))),
-        layout={'title': title}
-    )
+        title = 'Export-Import Volume with ' + country
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=list(range(2010, 2021)), y=get_data('export', country),
+                         base=0,
+                         marker_color='green',
+                         name='export'))
+    fig.add_trace(go.Bar(x=list(range(2010, 2021)), y=get_data('import', country),
+                         base=0,
+                         marker_color='red',
+                         name='import'))
     return fig
+
+# grafik ekspor all
+# @app.callback(Output("export-fig", "figure"), [Input("country-dropdown", "value")])
+# def display_export(country):
+#     title = ''
+#     if (country):
+#         title = 'Export Volume to ' + country
+#     fig = go.Figure(
+#         data=go.Bar(y=get_data('export', country), x=list(range(2010, 2021))),
+#         layout={'title': title}
+#     )
+#     return fig
 
 
 # grafik impor all
-@app.callback(Output("import-fig", "figure"), [Input('country-dropdown', 'value')])
-def display_import(country):
-    title = ''
-    if (country):
-        title = 'Import Volume from ' + country
-    fig = go.Figure(
-        data=go.Bar(y=get_data('import', country), x=list(range(2010, 2021))),
-        layout={'title': title}
-    )
-    return fig
+# @app.callback(Output("import-fig", "figure"), [Input('country-dropdown', 'value')])
+# def display_import(country):
+#     title = ''
+#     if (country):
+#         title = 'Import Volume from ' + country
+#     fig = go.Figure(
+#         data=go.Bar(y=get_data('import', country), x=list(range(2010, 2021))),
+#         layout={'title': title}
+#     )
+#     return fig
 
 
 import pandas as pd
@@ -224,7 +245,6 @@ def display_map(trade, commodity, trade_year):
                                mapbox_style="carto-positron",
                                zoom=1,
                                center={"lat": 30, "lon": 0},
-                               # opacity=0,
                                labels={'unemp': 'unemployment rate'}
                                )
     fig.update_layout(margin={"r": 0, "t": 10, "l": 20, "b": 0})
@@ -251,7 +271,7 @@ def display_energy_map(info_type):
     countries_json = json.load(open('./data/countries.geo.json'))
     df = pd.read_csv(datapath)
     trend = list(df.loc[:, col])
-    min_trend = min(trend)
+    # min_trend = min(trend)
     max_trend = max(trend)
 
     fig = px.choropleth_mapbox(df, geojson=countries_json, locations="Code", color=col,
