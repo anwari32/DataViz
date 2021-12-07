@@ -11,7 +11,14 @@ from data_utils import get_data
 from data_utils import get_data_on_demand
 
 from dash.dependencies import Input, Output, State, ClientsideFunction
-
+from heesi_bps import export_target, plot_dependency, plot_export_stacked_bar, plot_import_stacked_bar, plot_partner
+from heesi_bps import import_target
+from heesi_bps import commodities_set
+from heesi_bps import year_range
+from heesi_bps import heesi_relasi_ekspor
+from heesi_bps import bps_relasi_impor
+from heesi_bps import bps_relasi_import_crude_oil_boe
+from heesi_app import row_viz1, row_viz2
 
 
 app = dash.Dash(__name__)
@@ -88,32 +95,31 @@ app.layout = html.Div([
                 id="header",
             ),
         ),
-        
     ]),
-
-
-    html.Div([
-        html.Div(
-            [
-                html.Div(
-                    html.Div([
-                        dcc.Dropdown(
-                            id="country-on-demand",
-                            options=[
-                                {'label': x, 'value': x} for x in export_countries_on_demand
-                            ],
-                            value='Jepang',
-                            clearable=False,
-                        ),
-                        
-                        dcc.Graph(id='export-on-demand'),
-                        ])
-                        
-                    ),               
-            ],
-        ),
-    ]),
-    
+    #html.Div([
+    #    html.Div(
+    #        [
+                #html.Div(
+                    #html.Div([
+                    #    html.P('Export'),
+                    #    dcc.Dropdown(
+                    #        id="export-target-country",
+                    #        options=[
+                    #            {'label': x, 'value': x} for x in export_target
+                    #        ],
+                    #        value='Japan',
+                    #        clearable=False,
+                    #        placeholder='select export target country'
+                    #    ),
+                    #    dcc.Graph(id='export-graph'),  
+                    #])
+                #),           
+                
+    #        ],
+    #    ),
+    #]),
+    row_viz1,
+    row_viz2,
     dbc.Row([
         dbc.Col(
             html.Div([
@@ -204,7 +210,7 @@ app.layout = html.Div([
 
 # grafik bar chart ekspor on demand
 from data_utils import get_fig_data_on_demand
-@app.callback(Output('export-on-demand', 'figure'), [Input('country-on-demand', 'value')])
+# @app.callback(Output('export-on-demand', 'figure'), [Input('country-on-demand', 'value')])
 def display_export_on_demand(country):
     fig = px.bar(get_data_on_demand(country),
                  y="year",
@@ -261,8 +267,7 @@ import plotly.express as px
 
 
 # grafik geo
-@app.callback(Output('map', 'figure'),
-              [Input("trade_mode", "value"), Input("commodity", "value"), Input("trade_year", "value")])
+@app.callback(Output('map', 'figure'), [Input("trade_mode", "value"), Input("commodity", "value"), Input("trade_year", "value")])
 def display_map(trade, commodity, trade_year):
     # countries_json = json.load(open('./data/geojson.json'))
     countries_json = json.load(open('./data/countries.geo.json'))
@@ -335,10 +340,25 @@ def display_energy_map(info_type):
                                title=title)
     return fig
 
+@app.callback(Output('export-graph', 'figure'), [Input('export-target-country', 'value')])
+def display_export_graph(country):
+    fig = plot_export_stacked_bar(heesi_relasi_ekspor, country)
+    return fig
 
+@app.callback(Output('export-target-graph','figure'), [Input('export-commodity', 'value'), Input('export-year', 'value')])
+def display_export_target(commodity, year):
+    fig = plot_partner(heesi_relasi_ekspor, commodity, year, 'Target Ekspor Th. '.format(year))
+    return fig
 
-# new
+@app.callback(Output('import-graph', 'figure'), [Input('import-target-country', 'value')])
+def display_import_graph(country):
+    fig = plot_import_stacked_bar(bps_relasi_import_crude_oil_boe, country)
+    return fig
 
+@app.callback(Output('import-dependency', 'figure'), [Input('dependency-import-target-country', 'value')])
+def display_import_dependency(year):
+    fig = plot_dependency(bps_relasi_impor, 'crude_oil', year, 'Mitra Impor Th. {}'.format(year))
+    return fig
 
 app.run_server(debug=True)
 

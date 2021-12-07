@@ -118,5 +118,85 @@ def display_import_dependency(year):
     fig = plot_dependency(bps_relasi_impor, 'crude_oil', year, 'Mitra Impor Th. {}'.format(year))
     return fig
 
-heesi_app.run_server(debug=True)
+# heesi_app.run_server(debug=True)
 
+row_viz1 = dbc.Row([
+        dbc.Col(
+            html.Div([
+                html.P('Export'),
+                dcc.Dropdown(
+                    id="export-target-country",
+                    options=[
+                        {'label': x, 'value': x} for x in export_target
+                    ],
+                    value='Japan',
+                    clearable=False,
+                    placeholder='select export target country'
+                ),
+                dcc.Graph(id='export-graph'),  
+            ])
+        ),
+        dbc.Col(
+            html.Div([
+                html.P('Export Target'),
+                dbc.Row([
+                    dbc.Col(html.Div([
+                        dcc.Dropdown(
+                            id="export-commodity",
+                            options=[
+                                {'label': x[0], 'value': x[1]} for x in commodities_set
+                            ],
+                            value='crude_oil',
+                            clearable=False,
+                            placeholder="select commodity"
+                        ),
+                    ])),
+                    dbc.Col(html.Div([
+                        dcc.Dropdown(
+                            id="export-year",
+                            options=[
+                                {'label': x, 'value': x} for x in year_range
+                            ],
+                            value='2000',
+                            clearable=False,
+                            placeholder="select year"
+                        ),
+                    ]))
+                ]),
+                dcc.Graph(id='export-target-graph')
+            ])
+        ),
+    ])
+
+row_viz2 = dbc.Row([
+        dbc.Col([
+            html.Div([
+                html.P('Import'),
+                dcc.Dropdown(
+                    id='import-target-country',
+                    options=[
+                        {'label': x, 'value': x} for x in import_target
+                    ],
+                    value='Singapura',
+                    clearable=False,
+                    placeholder='select country'
+                ),
+                dcc.Graph(id='import-graph')
+            ])
+        ], width=8),
+        dbc.Col([
+            html.Div([
+                html.P('Crude Oil and Its Product Dependency'),
+                dcc.Dropdown(
+                    id='dependency-import-target-country',
+                    options=[
+                        {'label': x, 'value': x} for x in year_range
+                    ],
+                    value='2000',
+                    clearable=False,
+                    placeholder='select year'
+                ),
+                dcc.Graph(id='import-dependency')
+            ]),
+        ]),
+    ])
