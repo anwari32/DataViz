@@ -135,17 +135,22 @@ app.layout = html.Div([
         )
     ]),
     dbc.Row([
-        dbc.Col(
-            html.Div([
-                dcc.Graph(id='export-fig'),
-            ])
-        ),
-        dbc.Col(
-            html.Div([
-                dcc.Graph(id='import-fig'),
-            ])
-        ),
+       html.Div([
+           dcc.Graph(id='export-import-fig'),
+       ])
     ]),
+    # dbc.Row([
+    #     dbc.Col(
+    #         html.Div([
+    #             dcc.Graph(id='export-fig'),
+    #         ])
+    #     ),
+    #     dbc.Col(
+    #         html.Div([
+    #             dcc.Graph(id='import-fig'),
+    #         ])
+    #     ),
+    # ]),
     dbc.Row([
         dbc.Row([
             dbc.Col(
@@ -155,7 +160,8 @@ app.layout = html.Div([
                         id='trade_mode',
                         options=[
                             {'label': x, 'value': x.lower()} for x in ['Export', 'Import']
-                        ]
+                        ],
+                        value = 'export'
                     ),
                 ])
             ),
@@ -166,7 +172,8 @@ app.layout = html.Div([
                         id='commodity',
                         options=[
                             {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
-                        ]
+                        ],
+                        value = 'all'
                     ),
                 ])
             ),
@@ -177,7 +184,8 @@ app.layout = html.Div([
                         id='trade_year',
                         options=[
                             {'label': str(x), 'value': str(x)} for x in trade_year_range
-                        ]
+                        ],
+                        value = '2000'
                     ),
                 ])
             ),
@@ -199,7 +207,8 @@ app.layout = html.Div([
                     options=[
                         {'label': str(x[0]), 'value': str(x[1])} for x in
                         [('Energy Demand Trend', 'energy-demand-trend'), ('Renewable Energy Trend', 'renewable-demand-trend')]
-                    ]
+                    ],
+                    value = 'energy-demand-trend'
                 ),
                 dcc.Graph(id='energy_map'),
             ])
@@ -235,30 +244,46 @@ def display_export_on_demand(country):
 
 # grafik bar chart impor
 
-# grafik ekspor all
-@app.callback(Output("export-fig", "figure"), [Input("country-dropdown", "value")])
-def display_export(country):
-    title = ''
+# grafik ekspor-impor
+@app.callback(Output("export-import-fig", "figure"), [Input("country-dropdown", "value")])
+def display_export_import(country):
     if (country):
-        title = 'Export Volume to ' + country
-    fig = go.Figure(
-        data=go.Bar(y=get_data('export', country), x=list(range(2010, 2021))),
-        layout={'title': title}
-    )
+        title = 'Export-Import Volume with ' + country
+    fig = go.Figure()
+    fig.add_trace(go.Bar(x=list(range(2010, 2021)), y=get_data('export', country),
+                         base=0,
+                         marker_color='green',
+                         name='export'))
+    fig.add_trace(go.Bar(x=list(range(2010, 2021)), y=get_data('import', country),
+                         base=0,
+                         marker_color='red',
+                         name='import'))
     return fig
+
+# grafik ekspor all
+# @app.callback(Output("export-fig", "figure"), [Input("country-dropdown", "value")])
+# def display_export(country):
+#     title = ''
+#     if (country):
+#         title = 'Export Volume to ' + country
+#     fig = go.Figure(
+#         data=go.Bar(y=get_data('export', country), x=list(range(2010, 2021))),
+#         layout={'title': title}
+#     )
+#     return fig
 
 
 # grafik impor all
-@app.callback(Output("import-fig", "figure"), [Input('country-dropdown', 'value')])
-def display_import(country):
-    title = ''
-    if (country):
-        title = 'Import Volume from ' + country
-    fig = go.Figure(
-        data=go.Bar(y=get_data('import', country), x=list(range(2010, 2021))),
-        layout={'title': title}
-    )
-    return fig
+# @app.callback(Output("import-fig", "figure"), [Input('country-dropdown', 'value')])
+# def display_import(country):
+#     title = ''
+#     if (country):
+#         title = 'Import Volume from ' + country
+#     fig = go.Figure(
+#         data=go.Bar(y=get_data('import', country), x=list(range(2010, 2021))),
+#         layout={'title': title}
+#     )
+#     return fig
 
 
 import pandas as pd
@@ -293,19 +318,28 @@ def display_map(trade, commodity, trade_year):
     if (not trade_year):
         trade_year = '2000'
 
+    df_country = pd.read_csv('./data/energy_demand.csv')
+    df_country.drop(df_country.columns[2:], axis=1, inplace=True)
+    df_country.rename(columns={'Country': 'country', 'Code': 'id'}, inplace=True)
+    df = pd.concat([df, df_country], axis=0, ignore_index=True).\
+                               drop_duplicates(subset=['id']).fillna(0)
     tyr = list(df.loc[:, trade_year])
     min_val = min(tyr)
     max_val = max(tyr)
     # fig = px.choropleth_mapbox(df, geojson=countries_json, locations='fips', color='unemp',
-    fig = px.choropleth_mapbox(df, geojson=countries_json, locations='id', color=str(trade_year),
+    fig = px.choropleth_mapbox(df,
+                               geojson=countries_json,
+                               locations='id',
+                               color=str(trade_year),
                                color_continuous_scale="Viridis",
                                range_color=(min_val, max_val),
                                mapbox_style="carto-positron",
-                               zoom=3, center={"lat": 37.0902, "lon": -95.7129},
-                               opacity=0.5,
+                               zoom=1,
+                               center={"lat": 30, "lon": 0},
                                labels={'unemp': 'unemployment rate'}
                                )
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_layout(margin={"r": 0, "t": 10, "l": 20, "b": 0})
+    fig.layout.coloraxis.colorbar.title = 'Volume<br>(ribu ton)'
     # fig.show()
     return fig
 
@@ -328,7 +362,7 @@ def display_energy_map(info_type):
     countries_json = json.load(open('./data/countries.geo.json'))
     df = pd.read_csv(datapath)
     trend = list(df.loc[:, col])
-    min_trend = min(trend)
+    # min_trend = min(trend)
     max_trend = max(trend)
 
     fig = px.choropleth_mapbox(df, geojson=countries_json, locations="Code", color=col,
@@ -337,7 +371,11 @@ def display_energy_map(info_type):
                                mapbox_style="carto-positron",
                                labels={'Trend': label},
                                zoom=1,
+                               center={"lat": 30, "lon": 0},
                                title=title)
+    fig.update_layout(margin={"r": 0, "t": 30, "l": 20, "b": 0})
+    fig.layout.coloraxis.colorbar.title = 'Changes %'
+    fig.layout.coloraxis.colorbar.tickformat = '%0f'
     return fig
 
 @app.callback(Output('export-graph', 'figure'), [Input('export-target-country', 'value')])
