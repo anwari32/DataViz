@@ -47,7 +47,7 @@ export_countries_on_demand = get_rel_countries(mode='on-demand')
 
 trade_year_range = range(2000, 2021)
 
-app.layout = html.Div([    
+app.layout = html.Div([
     dbc.Row([
         dbc.Col(
             html.Div(
@@ -85,12 +85,12 @@ app.layout = html.Div([
                     ),
                     html.Div([
                             html.A(
-                                html.Button("Feedback", id="learn-more-button"),
+                                html.Button("Give Feedback", id="learn-more-button", style={'backgroundColor':'#F28E2B'},),
                                 href="https://docs.google.com/forms/d/e/1FAIpQLSd92s8qqxJ9zgwEQjSF01FBbVF2yAJxIXIIM2THpFzCkwSlYw/viewform",
                             )
                         ]
                     ),
-                    
+
                 ],
                 id="header",
             ),
@@ -111,16 +111,24 @@ app.layout = html.Div([
                     #        clearable=False,
                     #        placeholder='select export target country'
                     #    ),
-                    #    dcc.Graph(id='export-graph'),  
+                    #    dcc.Graph(id='export-graph'),
                     #])
-                #),           
-                
+                #),
+
     #        ],
     #    ),
     #]),
+    html.H5("Export Viz"),
     row_viz1,
+    html.H5("Import Viz"),
     row_viz2,
     dbc.Row([
+        html.H5("Export-Import volume"),
+        dbc.Col(
+            html.Div([
+                html.P("Country")
+            ])
+        ),
         dbc.Col(
             html.Div([
                 dcc.Dropdown(
@@ -139,19 +147,8 @@ app.layout = html.Div([
            dcc.Graph(id='export-import-fig'),
        ])
     ]),
-    # dbc.Row([
-    #     dbc.Col(
-    #         html.Div([
-    #             dcc.Graph(id='export-fig'),
-    #         ])
-    #     ),
-    #     dbc.Col(
-    #         html.Div([
-    #             dcc.Graph(id='import-fig'),
-    #         ])
-    #     ),
-    # ]),
     dbc.Row([
+        html.H5("Indonesia Trade Map"),
         dbc.Row([
             dbc.Col(
                 html.Div([
@@ -171,7 +168,7 @@ app.layout = html.Div([
                     dcc.Dropdown(
                         id='commodity',
                         options=[
-                            {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil', 'Gas']
+                            {'label': x, 'value': x.lower()} for x in ['All', 'Crude Oil']
                         ],
                         value = 'all'
                     ),
@@ -199,6 +196,7 @@ app.layout = html.Div([
         ]),
     ]),
     dbc.Row([
+        html.H5("Energy Trend Map"),
         dbc.Col(
             html.Div([
                 html.P("Energy Theme"),
@@ -252,12 +250,24 @@ def display_export_import(country):
     fig = go.Figure()
     fig.add_trace(go.Bar(x=list(range(2010, 2021)), y=get_data('export', country),
                          base=0,
-                         marker_color='green',
+                         marker_color='#4E79A7',
                          name='export'))
     fig.add_trace(go.Bar(x=list(range(2010, 2021)), y=get_data('import', country),
                          base=0,
-                         marker_color='red',
+                         marker_color='#F28E2B',
                          name='import'))
+    fig.update_layout(
+        xaxis_tickfont_size=14,
+        yaxis=dict(
+            title='Transaction Volume (thousand tons) ',
+            titlefont_size=16,
+            tickfont_size=14,
+        ),
+        xaxis=dict(
+            title='Year'
+        ),
+        margin={"r": 20, "t": 20, "l": 70, "b": 30, "pad": 10}
+    )
     return fig
 
 # grafik ekspor all
@@ -307,9 +317,9 @@ def display_map(trade, commodity, trade_year):
             df = pd.read_csv('./data/relasi_ekspor_all.csv')
     elif (trade == 'import'):
         if (commodity == 'crude oil'):
-            df = pd.read_csv('./data/relasi_impor_minyak_mentah_by_volume.csv')
-        elif (commodity == 'gas'):
-            df = pd.read_csv('./data/relasi_impor_gas_by_volume.csv')
+            df = pd.read_csv('./data/relasi_impor_minyak_bumi_dan_hasil_ribu_ton.csv')
+        # elif (commodity == 'gas'):
+        #     df = pd.read_csv('./data/relasi_impor_gas_by_volume.csv')
         else:
             df = pd.read_csv('./data/relasi_impor_all.csv')
     else:
@@ -334,12 +344,12 @@ def display_map(trade, commodity, trade_year):
                                color_continuous_scale="Viridis",
                                range_color=(min_val, max_val),
                                mapbox_style="carto-positron",
-                               zoom=1,
+                               zoom=0.8,
                                center={"lat": 30, "lon": 0},
                                labels={'unemp': 'unemployment rate'}
                                )
     fig.update_layout(margin={"r": 0, "t": 10, "l": 20, "b": 0})
-    fig.layout.coloraxis.colorbar.title = 'Volume<br>(ribu ton)'
+    fig.layout.coloraxis.colorbar.title = 'Volume<br>(thousand tons)'
     # fig.show()
     return fig
 
@@ -371,8 +381,8 @@ def display_energy_map(info_type):
                                mapbox_style="carto-positron",
                                labels={'Trend': label},
                                zoom=1,
-                               center={"lat": 30, "lon": 0},
-                               title=title)
+                               center={"lat": 30, "lon": 0}
+                               )
     fig.update_layout(margin={"r": 0, "t": 30, "l": 20, "b": 0})
     fig.layout.coloraxis.colorbar.title = 'Changes %'
     fig.layout.coloraxis.colorbar.tickformat = '%0f'
