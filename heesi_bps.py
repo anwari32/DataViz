@@ -26,9 +26,9 @@ heesi_energy_balance = {
 
 heesi_relasi_ekspor = {
     'coal': heesi_relasi_ekspor_coal_boe,
-    'crude_oil': heesi_relasi_ekspor_crude_oil_boe,
-    'lpg': '',
-    'lng': ''
+    'crude_oil': heesi_relasi_ekspor_crude_oil_boe
+    # 'lpg': '',
+    # 'lng': ''
 }
 
 bps_relasi_ekspor = {
@@ -45,8 +45,10 @@ bps_relasi_impor = {
     'lng': ''
 }
 
-commodities = ['coal', 'crude_oil', 'lpg', 'lng']
-commodities_set = [('Coal', 'coal'), ('Crude Oil', 'crude_oil'), ('LNG', 'lng'), ('LPG', 'lpg')]
+# commodities = ['coal', 'crude_oil', 'lpg', 'lng']
+commodities = ['coal', 'crude_oil']
+# commodities_set = [('Coal', 'coal'), ('Crude Oil', 'crude_oil'), ('LNG', 'lng'), ('LPG', 'lpg')]
+commodities_set = [('Coal', 'coal'), ('Crude Oil', 'crude_oil')]
 year_range = list(range(2000, 2021))
 
 ### Export and Import Partner
@@ -110,7 +112,7 @@ def plot_export_fraction(filepath, commodity, year):
 
 # Display stacked bar for exports.
 def plot_export_stacked_bar(dataset, country):
-    print('country = {}'.format(country))
+    # print('country = {}'.format(country))
     coal_export_df = pd.read_csv(dataset['coal'])
     crude_oil_export_df = pd.read_csv(dataset['crude_oil'])
 
@@ -137,7 +139,6 @@ def plot_export_stacked_bar(dataset, country):
     df['year'] = range(2000, 2021)
     df['coal'] = list(coal_values)
     df['crude_oil'] = list(crude_oil_values)
-
     fig = px.bar(df, x='year', y=['coal', 'crude_oil'], title='Our Export to {}'.format(country), labels={'variable': 'commodity', 'value': 'boe'})
     return fig
 
@@ -166,5 +167,5 @@ def plot_import_stacked_bar(dataset, country):
     df['year'] = list(range(2000, 2021))
     df['crude_oil'] = list(crude_oil_values.iloc[0])
 
-    fig = px.bar(df, x='year', y=['crude_oil'], title='Our Import to {}'.format(country), labels={'variable': 'commodity', 'value': 'boe'})
+    fig = px.bar(df, x='year', y=['crude_oil'], title='Our Import from {}'.format(country), labels={'variable': 'commodity', 'value': 'boe'})
     return fig

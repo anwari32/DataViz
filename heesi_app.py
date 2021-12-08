@@ -123,7 +123,7 @@ def display_import_dependency(year):
 row_viz1 = dbc.Row([
         dbc.Col(
             html.Div([
-                html.P('Export'),
+                html.P('Target Country'),
                 dcc.Dropdown(
                     id="export-target-country",
                     options=[
@@ -171,7 +171,7 @@ row_viz1 = dbc.Row([
 row_viz2 = dbc.Row([
         dbc.Col([
             html.Div([
-                html.P('Import'),
+                html.P('Target Country'),
                 dcc.Dropdown(
                     id='import-target-country',
                     options=[
