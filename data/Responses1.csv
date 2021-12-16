@@ -1,0 +1,18 @@
+Timestamp,Apakah Anda dapat melihat dan menentukan komoditas ekspor Indonesia yang paling dominan?,Bagaimana penilaian Anda tentang visualisasi untuk menentukan komoditas ekspor Indonesia?,Apakah Anda dapat melihat sumber energi yang paling banyak diimpor?,Bagaimana penilaian Anda terhadap visualisasi yang menjelaskan sumber energi yang Indonesia impor? (1: Sangat Baik dan 6: Sangat Buruk),Berikan komentar Anda terkait visualisasi tersebut,Apakah Anda dapat menemukan negara mana saja yang menjadi tempat bergantung Indonesia dalam pemenuhan energi domestik?,Bagaimana penilaian Anda terhadap visualisasi yang digunakan untuk mencari negara tempat bergantung Indonesia dalam pemenuhan energi domestik? (1: Paling Baik dan 6: Sangat Buruk),Bagaimana saran/kritik Anda terhadap dua visualisasi di atas?
+12/6/2021 12:41:13,Ya,2,Ya,2,Tidak ada,Ya,1,Tidak ada
+12/6/2021 14:49:26,Ya,2,Ya,2,"angka pada sumbu y tampak nya tidak simetris dari (0 - 16,4 - 19,3 - 21,2 -...), jarak antar angka di sumbu y terlihat sama namun berbeda",Ya,5,"karena range warna dari ungu ke kuning menggambarkan range dari 0, mungkin lebih baik semua negara yang tidak melakukan impor export dibuat 0"
+12/6/2021 15:53:44,Ya,4,Tidak,2,Tidak paham terkait visualisasi 2,Tidak,3,Tidak dapat melakukan filter untuk memilih negara Indonesia
+12/6/2021 18:48:02,Ya,2,Ya,2,"Di beberapa kasus, seperti negara Thailand tidak ada komoditas gas sehingga grafik lebih sulit untuk dibandingkan secara sekilas.",Ya,2,"Untuk warna putih pada peta, representasinya bagaimana? Apakah tidak ada data atau 0? Kalau, datanya 0 harusnya berwarna ungu."
+12/7/2021 15:14:23,Ya,2,Ya,2,"sedikit membingungkan yang sumbu x, satuan nya apa",Tidak,3,deskripsi mengenai masing2 visualisasi dan sumber data yang didapatkan
+12/7/2021 15:43:57,Ya,1,Tidak,3,"- Mohon maaf, sepertinya perlu tampilkan gambar visualisasi mana yang sedang dinilai
+- Judul pada visualisasi sepertinya perlu diperjelas
+- pemilihan warna, terutama untuk angka nol (dikaenakan mayoritas) sepertinya perlu dibuat lebih halus, sesuai dengan apa yang disampaikan Pak Saiful di kelas, untuk area yang besar, sebaiknya warnanya yang tidak mencolok. 
+- Skala data sepertinya perlu disesuaikan menjadi dari min ke max data. ",Tidak,3,"- Mohon maaf, sepertinya perlu tampilkan gambar visualisasi mana yang sedang dinilai
+- Judul pada visualisasi sepertinya perlu diperjelas
+- pemilihan warna, terutama untuk angka nol (dikarenakan mayoritas) sepertinya perlu dibuat lebih halus, sesuai dengan apa yang disampaikan Pak Saiful di kelas, untuk area yang besar, sebaiknya warnanya yang tidak mencolok. 
+- Skala data sepertinya perlu disesuaikan menjadi dari min ke max data. 
+- Sepertinya apa yang dicapture pada form feedback berbeda dengan yg saya lihat di visualisasi kelompok ini, saya mendapati peta dunia berwarna ungu gelap untuk data-data di sekitar nol. sementara di feedback berwarna abu2. Ketika berwarna ungu, saya cukup kesulitan menemukan pola pada choropleth. "
+12/7/2021 22:30:30,Ya,1,Ya,2,sdh oke,Ya,1,udh oke. legend jg jelas
+12/10/2021 16:52:47,Ya,2,Ya,3,"untuk pewarnaan barchart crude oil bisa disamakan antara ekspor dan impor, dan mungkin lebih baik jika warna untuk oil adalah kuning",Ya,2,"menurut saya, akan lebih baik jika antar visualisasi diberikan sekat, atau highlight per visualisasi 1 dan 2. Untuk visualisasi skrg, saya cukup kesulitan membedakan mana yg masuk vis 1 dan 2"
+12/10/2021 20:59:56,Ya,1,Ya,2,mungkin bisa dimasukkan satuan untuk sumbu x nya,Ya,1,cukup baik
+12/11/2021 11:58:34,Ya,3,Ya,3,visualisasinya udah berbeda sepertinya,Ya,2,sudah cukup baik

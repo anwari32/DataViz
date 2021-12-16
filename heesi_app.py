@@ -12,6 +12,7 @@ from heesi_bps import year_range
 from heesi_bps import heesi_relasi_ekspor
 from heesi_bps import bps_relasi_impor
 from heesi_bps import bps_relasi_import_crude_oil_boe
+from layouts import base_navbar
 
 heesi_app = dash.Dash(__name__)
 heesi_app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -105,7 +106,7 @@ def display_export_graph(country):
 
 @heesi_app.callback(Output('export-target-graph','figure'), [Input('export-commodity', 'value'), Input('export-year', 'value')])
 def display_export_target(commodity, year):
-    fig = plot_partner(heesi_relasi_ekspor, commodity, year, 'Target Ekspor Th. '.format(year))
+    fig = plot_partner(heesi_relasi_ekspor, commodity, year, 'Target Ekspor Th. {} '.format(year))
     return fig
 
 @heesi_app.callback(Output('import-graph', 'figure'), [Input('import-target-country', 'value')])
@@ -120,7 +121,10 @@ def display_import_dependency(year):
 
 # heesi_app.run_server(debug=True)
 
-row_viz1 = dbc.Row([
+row_viz1 = html.Div([
+    dbc.Row([
+    base_navbar,
+        html.H5("Export Visualization"),
         dbc.Col(
             html.Div([
                 html.P('Target Country'),
@@ -133,7 +137,7 @@ row_viz1 = dbc.Row([
                     clearable=False,
                     placeholder='select export target country'
                 ),
-                dcc.Graph(id='export-graph'),  
+                dcc.Graph(id='export-graph'),
             ])
         ),
         dbc.Col(
@@ -167,8 +171,12 @@ row_viz1 = dbc.Row([
             ])
         ),
     ])
+], className="container")
 
-row_viz2 = dbc.Row([
+row_viz2 = html.Div([
+    dbc.Row([
+    base_navbar,
+        html.H5("Import Visualization"),
         dbc.Col([
             html.Div([
                 html.P('Target Country'),
@@ -183,7 +191,7 @@ row_viz2 = dbc.Row([
                 ),
                 dcc.Graph(id='import-graph')
             ])
-        ], width=8),
+        ], width=6),
         dbc.Col([
             html.Div([
                 html.P('Crude Oil and Its Product Dependency'),
@@ -200,3 +208,4 @@ row_viz2 = dbc.Row([
             ]),
         ]),
     ])
+], className="container")
